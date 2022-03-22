@@ -12,7 +12,7 @@ import os
 import sys
 
 
-DONE = " ✅"
+DONE = " X"
 
 
 def list(stdout=sys.stdout, filename="tasks.csv"):
@@ -24,7 +24,7 @@ def list(stdout=sys.stdout, filename="tasks.csv"):
         with open(filename) as tasks_file:
             reader = csv.reader(tasks_file)
             for name, completed in reader:
-                stdout.write(f"{name}{DONE if completed else ''}\n")
+                stdout.write(f"{name}{DONE if eval(completed) else ''}\n")
     except FileNotFoundError:
         stdout.write("There are no tasks.\n")
 
@@ -34,35 +34,44 @@ def create(name, filename="tasks.csv"):
     Create a new task.
     """
 
-    with open(filename, "a") as tasks_file:
+    with open(filename, "a", newline="") as tasks_file:
         writer = csv.writer(tasks_file)
+        print(name)
         writer.writerow([name, False])
 
 
-def complete():
+def complete(stdout=sys.stdout,filename="tasks.csv"):
     """
     Mark an existing task as completed.
     """
 
     with (
-        open("tasks.csv") as tasks_file,
-        NamedTemporaryFile("w", delete=False) as new,
-    ):
+        open(filename) as tasks_file,
+        NamedTemporaryFile("w", delete=False) as new):
         reader = csv.reader(tasks_file)
         print("Current tasks:")
         for id, (name, completed) in enumerate(reader):
-            print(id, name, completed)
+            print(id+1, name, DONE if eval(completed) else '')
 
         to_complete = int(input("task ID?> "))
-        writer = csv.writer(new)
+        writer = csv.writer(new, lineterminator="\n")
         tasks_file.seek(0)
         for id, (name, completed) in enumerate(reader):
-            if id == to_complete:
+
+            if id+1 == to_complete and eval(completed) == True:
+
+                try:
+                    raise Exception("Already completed, try again!")
+                except:
+                    stdout.write("Already completed, try again!\n")
+
+            if id+1 == to_complete:
                 writer.writerow([name, True])
             else:
                 writer.writerow([name, completed])
 
-    os.rename(new.name, "tasks.csv")
+    os.remove(filename)
+    os.rename(new.name, filename)
 
 
 operations = dict(
@@ -81,8 +90,22 @@ def main():
 
         operation, *args = line.split()
         fn = operations.get(operation)
-        fn(*args)
+
+        if operation == 'create':
+            args = " ".join([*args])
+            fn(args)
+        else:
+            fn(*args)
 
 
 if __name__ == "__main__":
     main()
+
+
+
+# NOTES
+# 1) needed to use eval because string was "truthy" even though it said "False"
+# 2) needed to join arguments in main function into one string
+# 3) had to increment id in loops, delete tasks.csv file before renaming new file, and fix end of line 
+# 4) Integrated exception when task was already completed
+
