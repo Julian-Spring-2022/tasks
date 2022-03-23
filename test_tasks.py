@@ -50,3 +50,4 @@ def test_listing_no_tasks_does_not_error():
         stdout.seek(0)
         contents = stdout.readlines()
     assert contents==[]
+>>>>>>> Stashed changes
