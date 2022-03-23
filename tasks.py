@@ -9,25 +9,17 @@ store state which are more robust.
 from tempfile import NamedTemporaryFile
 import csv
 import os
+import sys
 
 
 DONE = " ✅"
 
 
-def list():
+def list(stdout=sys.stdout, filename="tasks.csv"):
     """
     List the current known tasks.
     """
 
-<<<<<<< Updated upstream
-    with open("tasks.csv") as tasks_file:
-        reader = csv.reader(tasks_file)
-        for name, completed in reader:
-            print(f"{name}{DONE if completed else ''}")
-
-
-def create(name):
-=======
     try:
         with open(filename) as tasks_file:
             reader = csv.reader(tasks_file)
@@ -38,12 +30,11 @@ def create(name):
 
 
 def create(name, status=False, filename="tasks.csv"):
->>>>>>> Stashed changes
     """
     Create a new task.
     """
 
-    with open("tasks.csv", "a") as tasks_file:
+    with open(filename, "a") as tasks_file:
         writer = csv.writer(tasks_file)
         writer.writerow([name, status])
 

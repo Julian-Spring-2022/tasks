@@ -1,7 +1,3 @@
-<<<<<<< Updated upstream
-def test_tasks():
-    pass
-=======
 from tempfile import TemporaryFile
 import os
 
@@ -82,8 +78,7 @@ def test_completed_tasks_are_filtered_from_completable_tasks():
         tasks.complete(completing=False, stdout=stdout, filename="tests.csv")
         stdout.seek(0)
         contents = stdout.readlines()
-    os.remove("tests.csv")
+        os.remove("tests.csv")
 
     assert contents == ["Current tasks:\n",
                         "2 test2 False\n"]
->>>>>>> Stashed changes
