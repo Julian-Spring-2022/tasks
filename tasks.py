@@ -19,6 +19,7 @@ def list():
     List the current known tasks.
     """
 
+<<<<<<< Updated upstream
     with open("tasks.csv") as tasks_file:
         reader = csv.reader(tasks_file)
         for name, completed in reader:
@@ -26,39 +27,57 @@ def list():
 
 
 def create(name):
+=======
+    try:
+        with open(filename) as tasks_file:
+            reader = csv.reader(tasks_file)
+            for name, completed in reader:
+                stdout.write(f"{name}{DONE if completed == 'True' else ''}\n")
+    except FileNotFoundError:
+        stdout.write("There are no tasks.\n")
+
+
+def create(name, status=False, filename="tasks.csv"):
+>>>>>>> Stashed changes
     """
     Create a new task.
     """
 
     with open("tasks.csv", "a") as tasks_file:
         writer = csv.writer(tasks_file)
-        writer.writerow([name, False])
+        writer.writerow([name, status])
 
 
-def complete():
+def complete(completing=True, stdout=sys.stdout, filename="tasks.csv"):
     """
     Mark an existing task as completed.
     """
 
-    with (
-        open("tasks.csv") as tasks_file,
-        NamedTemporaryFile("w", delete=False) as new,
-    ):
-        reader = csv.reader(tasks_file)
-        print("Current tasks:")
-        for id, (name, completed) in enumerate(reader):
-            print(id, name, completed)
+    try:
+        with (
+            open(filename) as tasks_file,
+            NamedTemporaryFile("w", delete=False) as new,
+        ):
+            reader = csv.reader(tasks_file)
+            stdout.write("Current tasks:\n")
+            for id, (name, completed) in enumerate(reader):
+                if completed != 'True':
+                    stdout.write(f"{id + 1} {name} {completed}\n")
 
-        to_complete = int(input("task ID?> "))
-        writer = csv.writer(new)
-        tasks_file.seek(0)
-        for id, (name, completed) in enumerate(reader):
-            if id == to_complete:
-                writer.writerow([name, True])
-            else:
-                writer.writerow([name, completed])
+            if completing:
+                to_complete = int(input("task ID?> ")) - 1
+                writer = csv.writer(new)
+                tasks_file.seek(0)
+                for id, (name, completed) in enumerate(reader):
+                    if id == to_complete:
+                        writer.writerow([name, True])
+                    else:
+                        writer.writerow([name, completed])
 
-    os.rename(new.name, "tasks.csv")
+                os.rename(new.name, filename)
+
+    except FileNotFoundError:
+        stdout.write("There are no tasks.\n")
 
 
 operations = dict(
