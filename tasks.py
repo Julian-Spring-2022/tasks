@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 A simple task manager.
-
 For the purposes of our exercise we store tasks in a file which we'll
 call tasks.csv (a CSV file). We'll talk more later about other ways to
 store state which are more robust.
@@ -9,45 +8,36 @@ store state which are more robust.
 from tempfile import NamedTemporaryFile
 import csv
 import os
+import sys
+
 
 #DONE = " ✅"
 DONE = " \u2705"
 
-def list():
+
+def list(stdout=sys.stdout, filename="tasks.csv"):
     """
     List the current known tasks.
     """
-<<<<<<< Updated upstream
-
-    with open("tasks.csv") as tasks_file:
-        reader = csv.reader(tasks_file)
-        for name, completed in reader:
-            print(f"{name}{DONE if completed else ''}")
-
-=======
+    # HW TASK 1: check box ONLY if completed=="True"
     try:
         with open(filename) as tasks_file:
             reader = csv.reader(tasks_file)
             for name, completed in reader:
-                output = name # HW TASK 1: check box ONLY if completed=="True"
+                output = name 
                 if completed=="True":
                     output = name + DONE
                 stdout.write(f"{output}\n")
     except FileNotFoundError:
         pass
->>>>>>> Stashed changes
 
-def create(name):
+
+def create(name, filename="tasks.csv"):
     """
     Create a new task.
     """
-<<<<<<< Updated upstream
-
-    with open("tasks.csv", "a") as tasks_file:
-=======
     # added newline option to address compatibility for Windows
     with open(filename, "a", newline='') as tasks_file:
->>>>>>> Stashed changes
         writer = csv.writer(tasks_file)
         writer.writerow([name, False])
 
@@ -93,13 +83,21 @@ operations = dict(
 )
 
 
+operations = dict(
+    create=create,
+    complete=complete,
+    list=list,
+)
+
+
 def main():
-    # Clarify instructions in prompt
+    # Modified input instructions, for clarity
     print("Enter a command [create <taskname>, list, complete].")
     while True:
         line = input("-> ").strip()
         if not line:
             return
+
         operation, *args = line.split()
         fn = operations.get(operation)
         fn(*args)

@@ -1,10 +1,12 @@
-<<<<<<< Updated upstream
-def test_tasks():
-    pass
-=======
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar 22 20:23:42 2022
+
+@author: renec
+"""
+
 from tempfile import TemporaryFile
 import os
-
 import tasks
 
 
@@ -50,4 +52,3 @@ def test_listing_no_tasks_does_not_error():
         stdout.seek(0)
         contents = stdout.readlines()
     assert contents==[]
->>>>>>> Stashed changes
